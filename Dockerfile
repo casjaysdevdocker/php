@@ -128,7 +128,7 @@ RUN \
 RUN set -ex \
   echo "Custom Settings"; \
   bash -c "$(curl -q -LSsf "https://github.com/templatemgr/php/raw/main/install.sh")"; \
-echo ""
+  echo ""
 
 RUN \
   echo "Setting up users and scripts "; \
