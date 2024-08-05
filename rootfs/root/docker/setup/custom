@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202408041012-git
+# @@Author           :  CasjaysDev
+# @@Contact          :  CasjaysDev <docker-admin@casjaysdev.pro>
+# @@License          :  MIT
+# @@ReadME           :
+# @@Copyright        :  Copyright 2023 CasjaysDev
+# @@Created          :  Mon Aug 28 06:48:42 PM EDT 2023
+# @@File             :  custom
+# @@Description      :  script to run custom
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck shell=sh
+# shellcheck disable=SC2016
+# shellcheck disable=SC2031
+# shellcheck disable=SC2120
+# shellcheck disable=SC2155
+# shellcheck disable=SC2199
+# shellcheck disable=SC2317
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set bash options
+[ "$DEBUGGER" = "on" ] && echo "Enabling debugging" && set -ex$DEBUGGER_OPTIONS || set -e
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set env variables
+exitCode=0
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Main script
+[ -d "/etc/php/php-fpm" ] && rm -Rf "/etc/php/php-fpm" "/etc/php/php-fpm"*
+[ -d "/tmp/etc/php" ] && [ -d "/etc/php" ] && cp -Rf "/tmp/etc/php/." "/etc/php/"
+[ -d "/tmp/etc/php-fpm" ] && [ -d "/etc/php-fpm" ] && cp -Rf "/tmp/etc/php-fpm" "/etc/php-fpm"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Set the exit code
+exitCode=0
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+exit $exitCode
