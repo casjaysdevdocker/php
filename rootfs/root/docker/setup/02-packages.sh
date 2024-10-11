@@ -24,9 +24,10 @@ set -o pipefail
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set env variables
 exitCode=0
-
+[ ! -f "/usr/local/etc/php-fpm.conf.default" ] || rm -Rf "/usr/local/etc/php-fpm.conf.default"
+[ ! -f "/usr/local/etc/php-fpm.d/www.conf.default" ] || rm -Rf "/usr/local/etc/php-fpm.d/www.conf.default"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Predifined actions
+# Predefined actions
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main script

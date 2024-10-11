@@ -56,7 +56,7 @@ if [ -d "/tmp/etc" ]; then
     echo "Installing $config to /etc/$name"
     if [ -d "$config" ]; then
       mkdir -p "/etc/$name"
-      copy "$config/." "/etc/$name/"
+      copy "$config/." "/usr/local/etc/$name/"
       mkdir -p "/usr/local/share/template-files/config/$name"
       copy "$config/." "/usr/local/share/template-files/config/$name/"
     else

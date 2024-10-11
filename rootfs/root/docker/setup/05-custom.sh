@@ -38,7 +38,7 @@ if [ -n "$EXT_INSTALLED" ]; then
     chmod +x "$BIN_DIR/install-php-extensions"
     for ext in $EXT_LIST $EXT_ADDITIONAL; do
       if ! echo "$ext" | grep -q "$EXT_INSTALLED"; then
-        install-php-extensions $ext
+        apk add --no-cache php-$ext || install-php-extensions $ext
       fi
     done
   else

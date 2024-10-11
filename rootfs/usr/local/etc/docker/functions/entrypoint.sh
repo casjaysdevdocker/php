@@ -1058,7 +1058,9 @@ __initialize_ssl_certs() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 __start_php_dev_server() {
   local web_root="${1:-$WWW_ROOT_DIR}"
-  if [ -n "$PHP_DEV_SERVER_PORT" ] && [ "$2" = "yes" ]; then
+  local start_server="${2:-$PHP_DEV_SERVER_START}"
+  [ "$CONTAINER_NAME" = "php" ] && start_server="yes"
+  if [ -n "$PHP_DEV_SERVER_PORT" ] && [ "$start_server" = "yes" ]; then
     if ! echo "$web_root" | grep -q "^/usr/share/httpd"; then
       find "$web_root" -type f -not -path '.git*' -iname '*.php' -exec sed -i 's|[<].*SERVER_ADDR.*[>]|'${CONTAINER_IP4_ADDRESS:-127.0.0.1}'|g' {} \; 2>/dev/null
       php -S 0.0.0.0:$PHP_DEV_SERVER_PORT -t "$web_root"
@@ -1153,6 +1155,7 @@ export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LANG:-C.UTF-8}"
 export TZ="${TZ:-${TIMEZONE:-America/New_York}}"
 export HOSTNAME="${FULL_DOMAIN_NAME:-${SERVER_HOSTNAME:-$HOSTNAME}}"
+export PATH="/usr/local/etc/docker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Default directories
 export SSL_DIR="${SSL_DIR:-/config/ssl}"

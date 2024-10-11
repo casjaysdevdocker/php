@@ -10,6 +10,7 @@ ARG DEFAULT_FILE_DIR="/usr/local/share/template-files"
 ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data"
 ARG DEFAULT_CONF_DIR="/usr/local/share/template-files/config"
 ARG DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
+ARG PATH="/usr/local/etc/docker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ARG USER="root"
 ARG SHELL_OPTS="set -e -o pipefail"
@@ -31,6 +32,7 @@ ARG BUILD_VERSION="${BUILD_DATE}"
 FROM tianon/gosu:latest AS gosu
 FROM ${PULL_URL}:${DISTRO_VERSION} AS build
 ARG TZ
+ARG PATH
 ARG USER
 ARG LICENSE
 ARG TIMEZONE
@@ -57,6 +59,7 @@ ARG PACK_LIST="bash-completion git curl wget sudo unzip iproute2 ssmtp openssl j
 
 ENV ENV=~/.profile
 ENV SHELL="/bin/sh"
+ENV PATH="${PATH}"
 ENV TZ="${TIMEZONE}"
 ENV TIMEZONE="${TZ}"
 ENV LANG="${LANGUAGE}"
@@ -67,6 +70,10 @@ USER ${USER}
 WORKDIR /root
 
 COPY ./rootfs/usr/local/bin/. /usr/local/bin/
+
+RUN set -e; \
+  echo "Updating the system"; \
+  pkmgr update
 
 RUN set -e; \
   echo "Setting up prerequisites"; \
@@ -178,6 +185,7 @@ RUN echo "Deleting unneeded files"; \
 RUN echo "Init done"
 FROM scratch
 ARG TZ
+ARG PATH
 ARG USER
 ARG TIMEZONE
 ARG LANGUAGE
@@ -223,6 +231,7 @@ LABEL com.github.containers.toolbox="false"
 
 ENV ENV=~/.bashrc
 ENV USER="${USER}"
+ENV PATH="${PATH}"
 ENV SHELL="/bin/bash"
 ENV TZ="${TIMEZONE}"
 ENV TIMEZONE="${TZ}"
