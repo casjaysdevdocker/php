@@ -38,20 +38,24 @@ if [ -n "$EXT_INSTALLED" ]; then
     chmod +x "$BIN_DIR/install-php-extensions"
     for ext in $EXT_LIST $EXT_ADDITIONAL; do
       if ! echo "$ext" | grep -q "$EXT_INSTALLED"; then
-        apk add --no-cache php-$ext || install-php-extensions $ext
+        if apk add --no-cache php-$ext || install-php-extensions $ext; then
+          echo "Installed $ext"
+        else
+          echo "Failed to install $ext" >&2
+        fi
       fi
     done
   else
-    echo "Failed to install $BIN_DIR/install-php-extensions"
-    exit 1
+    echo "Failed to install $BIN_DIR/install-php-extensions" >&2
+    exitCode=1
   fi
 else
   echo "Can not get php modules: is php installed?"
-  exit 2
+  exitCode=2
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main script
-
+php -m
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set the exit code
 #exitCode=$?
