@@ -24,11 +24,19 @@ set -o pipefail
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set env variables
 exitCode=0
-if [ -d "/etc/php/php-fpm" ]; then rm -Rf "/etc/php/php-fpm"; fi
-if [ -d "/etc/php/php-fpm.d" ]; then rm -Rf "/etc/php/php-fpm.d"; fi
+php_ini=$(find /etc/php* -name 'php.ini' | grep -v '/etc/php$' | head -n1 | grep '^' || false)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Predifined actions
-
+if [ -d "/etc/php/php-fpm" ]; then rm -Rf "/etc/php/php-fpm"; fi
+if [ -d "/etc/php/php-fpm.d" ]; then rm -Rf "/etc/php/php-fpm.d"; fi
+if [ -n "$php_ini" ]; then
+  php_dir="$(dirname "$php_ini")"
+  if [ $php_dir != "/etc/php" ]; then
+    [ -L "/etc/php" ] || unlink /etc/php
+    ln -sf "$php_dir" /etc/php
+    [ -f "/etc/php.ini" ] && mv -f "/etc/php.ini" "/etc/php/php.ini"
+  fi
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main script
 
