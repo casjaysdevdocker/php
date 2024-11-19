@@ -3,7 +3,7 @@ name: php-8
 on: push
 
 jobs:
-  release-image:
+  release-php-8:
     runs-on: act_runner
     container:
       image: catthehacker/ubuntu:act-latest

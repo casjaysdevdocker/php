@@ -1,9 +1,9 @@
-name: php-latestr
+name: php-latest
 
 on: push
 
 jobs:
-  release-image:
+  release-php-latest:
     runs-on: act_runner
     container:
       image: catthehacker/ubuntu:act-latest
