@@ -62,7 +62,7 @@ START_SCRIPT="/usr/local/etc/docker/exec/$SERVICE_NAME"
 RESET_ENV="no"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set webroot
-WWW_ROOT_DIR="/usr/share/httpd/default"
+WWW_ROOT_DIR="/usr/local/share/httpd/default"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Default predefined variables
 DATA_DIR="/data/php"   # set data directory
@@ -204,9 +204,9 @@ __run_pre_execute_checks() {
     { [ -d "/data/htdocs/www" ] && PHP_DEV_SERVER_ROOT="/data/htdocs/www"; } || { [ -d "/data/www" ] && PHP_DEV_SERVER_ROOT="/data/www"; }
     WWW_ROOT_DIR="$PHP_DEV_SERVER_ROOT"
     [ -d "$WWW_ROOT_DIR" ] || mkdir -p "$WWW_ROOT_DIR"
-    if [ -d "/usr/share/httpd/default" ]; then
+    if [ -d "/usr/local/share/httpd/default" ]; then
       if [ ! -d "$WWW_ROOT_DIR" ] || __is_dir_empty "$WWW_ROOT_DIR"; then
-        __file_copy "/usr/share/httpd/default" "$WWW_ROOT_DIR"
+        __file_copy "/usr/local/share/httpd/default" "$WWW_ROOT_DIR"
       fi
     elif [ ! -d "$WWW_ROOT_DIR" ]; then
       mkdir -p "$WWW_ROOT_DIR"
