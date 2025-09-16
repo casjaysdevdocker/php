@@ -1,8 +1,7 @@
-# syntax=docker/dockerfile:1
 # Docker image for php using the alpine template
 ARG IMAGE_NAME="php"
 ARG PHP_SERVER="php"
-ARG BUILD_DATE="202410090957"
+ARG BUILD_DATE="202509161149"
 ARG LANGUAGE="en_US.UTF-8"
 ARG TIMEZONE="America/New_York"
 ARG WWW_ROOT_DIR="/usr/local/share/httpd/default"
@@ -15,8 +14,8 @@ ARG PATH="/usr/local/etc/docker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/us
 ARG USER="root"
 ARG SHELL_OPTS="set -e -o pipefail"
 
-ARG SERVICE_PORT=""
-ARG EXPOSE_PORTS=""
+ARG SERVICE_PORT="80"
+ARG EXPOSE_PORTS="9000"
 ARG PHP_VERSION="system"
 ARG NODE_VERSION="system"
 ARG NODE_MANAGER="system"
@@ -32,7 +31,6 @@ ARG BUILD_VERSION="${BUILD_DATE}"
 FROM tianon/gosu:latest AS gosu
 FROM ${PULL_URL}:${DISTRO_VERSION} AS build
 ARG TZ
-ARG PATH
 ARG USER
 ARG LICENSE
 ARG TIMEZONE
@@ -54,6 +52,7 @@ ARG NODE_MANAGER
 ARG PHP_VERSION
 ARG PHP_SERVER
 ARG SHELL_OPTS
+ARG PATH
 
 ARG PACK_LIST="bash-completion git curl wget sudo unzip iproute2 ssmtp openssl jq tzdata mailcap ncurses util-linux pciutils usbutils coreutils binutils findutils grep rsync zip tini py3-pip procps net-tools coreutils sed gawk grep attr findutils readline lsof less curl shadow certbot ca-certificates "
 
@@ -72,12 +71,12 @@ WORKDIR /root
 COPY ./rootfs/usr/local/bin/. /usr/local/bin/
 
 RUN set -e; \
-  echo "Updating the system"; \
-  pkmgr update
+  echo "Updating the system and ensuring bash is installed"; \
+  pkmgr update;pkmgr install bash
 
 RUN set -e; \
   echo "Setting up prerequisites"; \
-  apk add --no-cache bash
+  true
 
 ENV SHELL="/bin/bash"
 SHELL [ "/bin/bash", "-c" ]
@@ -124,7 +123,6 @@ RUN echo "Updating system files "; \
   pip_bin="$(command -v python3 2>/dev/null || command -v python2 2>/dev/null || command -v python 2>/dev/null || true)"; \
   py_version="$(command $pip_bin --version | sed 's|[pP]ython ||g' | awk -F '.' '{print $1$2}' | grep '[0-9]' || true)"; \
   [ "$py_version" -gt "310" ] && pip_opts="--break-system-packages " || pip_opts=""; \
-  if [ -n "$pip_bin" ];then $pip_bin -m pip install --break-system-packages certbot-dns-rfc2136 certbot-dns-duckdns certbot-dns-cloudflare certbot-nginx $pip_opts || true;fi; \
   [ -f "/usr/share/zoneinfo/${TZ}" ] && ln -sf "/usr/share/zoneinfo/${TZ}" "/etc/localtime" || true; \
   [ -n "$PHP_BIN" ] && [ -z "$(command -v php 2>/dev/null)" ] && ln -sf "$PHP_BIN" "/usr/bin/php" 2>/dev/null || true; \
   [ -n "$PHP_FPM" ] && [ -z "$(command -v php-fpm 2>/dev/null)" ] && ln -sf "$PHP_FPM" "/usr/bin/php-fpm" 2>/dev/null || true; \
@@ -138,7 +136,7 @@ RUN echo "Updating system files "; \
 
 RUN echo "Custom Settings"; \
   $SHELL_OPTS; \
-  echo ""
+echo ""
 
 RUN echo "Setting up users and scripts "; \
   $SHELL_OPTS; \
@@ -155,7 +153,7 @@ RUN echo "Setting OS Settings "; \
 
 RUN echo "Custom Applications"; \
   $SHELL_OPTS; \
-  echo ""
+echo ""
 
 RUN echo "Running custom commands"; \
   if [ -f "/root/docker/setup/05-custom.sh" ];then echo "Running the custom script";/root/docker/setup/05-custom.sh||{ echo "Failed to execute /root/docker/setup/05-custom.sh" && exit 10; };echo "Done running the custom script";fi; \
@@ -215,25 +213,25 @@ LABEL maintainer="CasjaysDev <docker-admin@casjaysdev.pro>"
 LABEL org.opencontainers.image.vendor="CasjaysDev"
 LABEL org.opencontainers.image.authors="CasjaysDev"
 LABEL org.opencontainers.image.description="Containerized version of ${IMAGE_NAME}"
-LABEL org.opencontainers.image.name="${IMAGE_NAME}"
+LABEL org.opencontainers.image.title="${IMAGE_NAME}"
 LABEL org.opencontainers.image.base.name="${IMAGE_NAME}"
-LABEL org.opencontainers.image.license="${LICENSE}"
-LABEL org.opencontainers.image.build-date="${BUILD_DATE}"
+LABEL org.opencontainers.image.authors="${LICENSE}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.version="${BUILD_VERSION}"
 LABEL org.opencontainers.image.schema-version="${BUILD_VERSION}"
-LABEL org.opencontainers.image.url="https://hub.docker.com/r/casjaysdevdocker/php"
-LABEL org.opencontainers.image.url.source="https://hub.docker.com/r/casjaysdevdocker/php"
+LABEL org.opencontainers.image.url="docker.io"
+LABEL org.opencontainers.image.source="docker.io"
 LABEL org.opencontainers.image.vcs-type="Git"
-LABEL org.opencontainers.image.vcs-ref="${BUILD_VERSION}"
-LABEL org.opencontainers.image.vcs-url="https://github.com/casjaysdevdocker/php"
+LABEL org.opencontainers.image.revision="${BUILD_VERSION}"
+LABEL org.opencontainers.image.source="https://github.com/casjaysdevdocker/php"
 LABEL org.opencontainers.image.documentation="https://github.com/casjaysdevdocker/php"
 LABEL com.github.containers.toolbox="false"
 
 ENV ENV=~/.bashrc
 ENV USER="${USER}"
 ENV PATH="${PATH}"
-ENV SHELL="/bin/bash"
 ENV TZ="${TIMEZONE}"
+ENV SHELL="/bin/bash"
 ENV TIMEZONE="${TZ}"
 ENV LANG="${LANGUAGE}"
 ENV TERM="xterm-256color"
@@ -254,6 +252,5 @@ VOLUME [ "/config","/data" ]
 
 EXPOSE ${SERVICE_PORT} ${ENV_PORTS}
 
-CMD [ "tail", "-f", "/dev/null" ]
-ENTRYPOINT [ "tini","--","/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT [ "tini","--","/usr/local/bin/entrypoint.sh" "start" ]
 HEALTHCHECK --start-period=10m --interval=5m --timeout=15s CMD [ "/usr/local/bin/entrypoint.sh", "healthcheck" ]
