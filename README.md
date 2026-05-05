@@ -19,17 +19,17 @@ dockermgr update php
 ## Install and run container
   
 ```shell
-mkdir -p "$HOME/.local/share/srv/docker/php/rootfs"
+mkdir -p "$HOME/.local/share/srv/docker/php/volumes"
 git clone "https://github.com/dockermgr/php" "$HOME/.local/share/CasjaysDev/dockermgr/php"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/php/rootfs/." "$HOME/.local/share/srv/docker/php/rootfs/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/php/rootfs/." "$HOME/.local/share/srv/docker/php/volumes/"
 docker run -d \
 --restart always \
 --privileged \
 --name casjaysdevdocker-php \
 --hostname php \
 -e TZ=${TIMEZONE:-America/New_York} \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/rootfs/data:/data:z" \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/rootfs/config:/config:z" \
+-v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/data:/data:z" \
+-v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/config:/config:z" \
 -p 80:80 \
 casjaysdevdocker/php:latest
 ```
@@ -46,8 +46,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=php
     volumes:
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/rootfs/data:/data:z"
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/rootfs/config:/config:z"
+      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/data:/data:z"
+      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/config:/config:z"
     ports:
       - 80:80
     restart: always
