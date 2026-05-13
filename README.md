@@ -1,6 +1,6 @@
 ## 👋 Welcome to php 🚀  
 
-Description  
+php README  
   
   
 ## Install my system scripts  
@@ -19,17 +19,18 @@ dockermgr update php
 ## Install and run container
   
 ```shell
-mkdir -p "$HOME/.local/share/srv/docker/php/volumes"
+dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs"
+mkdir -p "/var/lib/srv/$USER/docker/php/rootfs"
 git clone "https://github.com/dockermgr/php" "$HOME/.local/share/CasjaysDev/dockermgr/php"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/php/rootfs/." "$HOME/.local/share/srv/docker/php/volumes/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/php/rootfs/." "$dockerHome/"
 docker run -d \
 --restart always \
 --privileged \
---name casjaysdevdocker-php \
+--name casjaysdevdocker-php-latest \
 --hostname php \
 -e TZ=${TIMEZONE:-America/New_York} \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/data:/data:z" \
--v "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/config:/config:z" \
+-v "$dockerHome/data:/data:z" \
+-v "$dockerHome/config:/config:z" \
 -p 80:80 \
 casjaysdevdocker/php:latest
 ```
@@ -46,8 +47,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=php
     volumes:
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/data:/data:z"
-      - "$HOME/.local/share/srv/docker/casjaysdevdocker-php/volumes/config:/config:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/data:/data:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/config:/config:z"
     ports:
       - 80:80
     restart: always
