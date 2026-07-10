@@ -19,8 +19,8 @@ dockermgr update php
 ## Install and run container
   
 ```shell
-dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs"
-mkdir -p "/var/lib/srv/$USER/docker/php/rootfs"
+dockerHome="/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs"
+mkdir -p "/srv/$USER/docker/php/rootfs"
 git clone "https://github.com/dockermgr/php" "$HOME/.local/share/CasjaysDev/dockermgr/php"
 cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/php/rootfs/." "$dockerHome/"
 docker run -d \
@@ -47,8 +47,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=php
     volumes:
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/data:/data:z"
-      - "/var/lib/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/config:/config:z"
+      - "/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/data:/data:z"
+      - "/srv/$USER/docker/casjaysdevdocker/php/php/latest/rootfs/config:/config:z"
     ports:
       - 80:80
     restart: always
